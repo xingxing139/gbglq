@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文件管理器</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 400px;
+    }
+
+    h1 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        resize: vertical;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #files-container {
+        margin-top: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    li:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>文件管理器</h1>
+    <form id="file-form">
+        <label for="filename">文件名：</label>
+        <input type="text" id="filename" required>
+        <br>
+        <label for="filecontent">内容：</label>
+        <textarea id="filecontent" rows="4" required></textarea>
+        <br>
+        <button type="submit">保存文件</button>
+    </form>
+    <div id="files-container">
+        <h2>已保存的文件</h2>
+        <ul id="file-list"></ul>
+    </div>
+</div>
+
+<script>
+    const fileForm = document.getElementById('file-form');
+    const filenameInput = document.getElementById('filename');
+    const fileContentInput = document.getElementById('filecontent');
+    const fileList = document.getElementById('file-list');
+
+    fileForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const filename = filenameInput.value;
+        const fileContent = fileContentInput.value;
+
+        if (filename.trim() === '' || fileContent.trim() === '') {
+            alert('请填写文件名和内容');
+            return;
+        }
+
+        // 将文件保存到本地存储
+        localStorage.setItem(filename, fileContent);
+
+        // 清空输入框
+        filenameInput.value = '';
+        fileContentInput.value = '';
+
+        // 更新文件列表
+        updateFileList();
+    });
+
+    function updateFileList() {
+        fileList.innerHTML = '';
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const filename = localStorage.key(i);
+            const listItem = document.createElement('li');
+            listItem.textContent = filename;
+            listItem.addEventListener('click', function() {
+                loadFile(filename);
+            });
+            fileList.appendChild(listItem);
+        }
+    }
+
+    function loadFile(filename) {
+        const fileContent = localStorage.getItem(filename);
+        if (fileContent !== null) {
+            fileContentInput.value = fileContent;
+        }
+    }
+
+    // 初始化文件列表
+    updateFileList();
+</script>
+</body>
+</html>
